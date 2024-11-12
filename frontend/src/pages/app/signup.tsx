@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-
+import { api } from "@/services/api";
+import { useNavigate } from 'react-router-dom';
 
 interface FormData {
   name: string;
@@ -8,13 +9,16 @@ interface FormData {
   confirmPassword: string;
 }
 
-const SignUpForm: React.FC = () => {
+export function SignUp() {
+//const SignUpForm: React.FC = () => { deprecated
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
   });
+
+  const navigate = useNavigate()
 
   // Função para atualizar o estado do formulário
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,7 +36,20 @@ const SignUpForm: React.FC = () => {
       alert('As senhas não coincidem');
     } else {
       // Lógica de envio do formulário (ex: envio para API)
-      alert('Formulário enviado com sucesso');
+      api.post("/employees", formData)
+      .then(() =>{
+
+        alert('Formulário enviado com sucesso');
+        navigate("/login")
+      })
+      .catch(error => {
+        if (error.response) {
+          alert(error.response.data.message);
+        } else {
+          alert("Não foi possivel cadastrar")
+        }
+      })
+
       console.log(formData);
     }
   };
@@ -120,4 +137,4 @@ const SignUpForm: React.FC = () => {
   );
 };
 
-export default SignUpForm;
+//export default SignUpForm;
